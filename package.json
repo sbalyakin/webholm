@@ -3,7 +3,11 @@
   "version": "54.0.0",
   "description": "Wrap web apps natively (Webholm, forked from Nativefier)",
   "license": "MIT",
-  "author": "Goh Jia Hao",
+  "author": "Sergey Balyakin <sbalyakin@gmail.com>",
+  "contributors": [
+    "Goh Jia Hao",
+    "Webholm and Nativefier contributors"
+  ],
   "engines_README": "Bumping the minimum required Node version? You must bump: 1. package.json -> engines.node, 2. package.json -> devDependencies.@types/node , 3. tsconfig.json -> {target, lib} , 4. .github/workflows/ci.yml -> node-version",
   "engines_READMEforEnginesNode": "Here in engines.node, we require a version as old as possible, for Webholm to be easily installable using the stock Node.js shipped by conservative Linux distros. It's a balancing act between this, and our own dependencies requiring more a recent Node; as much as possible, try to keep supporting Debian stable; https://packages.debian.org/search?suite=stable&keywords=nodejs",
   "engines": {
@@ -22,14 +26,13 @@
   "bin": {
     "webholm": "lib/cli.js"
   },
-  "_repository_TODO": "Update homepage/repository/bugs when the Webholm fork repository URL is finalized",
-  "homepage": "https://github.com/nativefier/nativefier",
+  "homepage": "https://github.com/sbalyakin/webholm",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nativefier/nativefier.git"
+    "url": "git+https://github.com/sbalyakin/webholm.git"
   },
   "bugs": {
-    "url": "https://github.com/nativefier/nativefier/issues"
+    "url": "https://github.com/sbalyakin/webholm/issues"
   },
   "scripts": {
     "build-app": "cd app && webpack",
