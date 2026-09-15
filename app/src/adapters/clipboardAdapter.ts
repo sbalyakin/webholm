@@ -1,14 +1,20 @@
 import { clipboard } from 'electron';
 
-export function readClipboardText(
+export async function readClipboardText(
   type: 'selection' | 'clipboard' = 'clipboard',
-): string {
-  return clipboard.readText(type);
+): Promise<string> {
+  if (type === 'selection' && clipboard.selection) {
+    return clipboard.selection.readText();
+  }
+  return clipboard.readText();
 }
 
-export function writeClipboardText(
+export async function writeClipboardText(
   text: string,
   type: 'selection' | 'clipboard' = 'clipboard',
-): void {
-  clipboard.writeText(text, type);
+): Promise<void> {
+  if (type === 'selection' && clipboard.selection) {
+    return clipboard.selection.writeText(text);
+  }
+  return clipboard.writeText(text);
 }

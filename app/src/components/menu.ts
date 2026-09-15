@@ -147,14 +147,18 @@ export function generateMenu(
         accelerator: 'CmdOrCtrl+Shift+C',
         click: (): void => {
           // We use clipboard.readText to strip down formatting
-          const text = readClipboardText('selection');
-          writeClipboardText(cleanupPlainText(text), 'clipboard');
+          void (async (): Promise<void> => {
+            const text = await readClipboardText('selection');
+            await writeClipboardText(cleanupPlainText(text), 'clipboard');
+          })();
         },
       },
       {
         label: 'Copy Current URL',
         accelerator: 'CmdOrCtrl+Shift+L',
-        click: (): void => writeClipboardText(getCurrentURL()),
+        click: (): void => {
+          void writeClipboardText(getCurrentURL());
+        },
       },
       {
         label: 'Paste',

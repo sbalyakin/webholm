@@ -33,6 +33,10 @@ jest.mock('electron', () => ({
   clipboard: {
     readText: mockReadClipboardText,
     writeText: mockWriteClipboardText,
+    selection: {
+      readText: mockReadClipboardText,
+      writeText: mockWriteClipboardText,
+    },
   },
   globalShortcut: { register: mockRegisterGlobalShortcut },
 }));
@@ -102,11 +106,11 @@ describe('runtime electron adapters', () => {
     });
   });
 
-  it('clipboardAdapter delegates read/write', () => {
-    readClipboardText('selection');
-    writeClipboardText('x', 'clipboard');
-    expect(mockReadClipboardText).toHaveBeenCalledWith('selection');
-    expect(mockWriteClipboardText).toHaveBeenCalledWith('x', 'clipboard');
+  it('clipboardAdapter delegates read/write', async () => {
+    await readClipboardText('selection');
+    await writeClipboardText('x', 'clipboard');
+    expect(mockReadClipboardText).toHaveBeenCalled();
+    expect(mockWriteClipboardText).toHaveBeenCalledWith('x');
   });
 
   it('globalShortcutAdapter delegates register', () => {
