@@ -55,13 +55,13 @@ Adapters in `app/src/adapters/`:
 
 Regression check: `rg "from 'electron'" app/src` should list only `adapters/` and `preload/` (not `*.test.ts`; tests use `jest.requireActual('electron')` or adapter mocks).
 
-**Published npm package:** only `lib/` is shipped (see `.npmignore`). `buildTimeContract.ts` inlines `NATIVEFIER_JSON_FILENAME` and re-exports types only (erased at compile); it must not `require` `shared/lib` at runtime. Keep that constant in sync with `shared/src/contract.ts`.
+**Published npm package:** only `lib/` is shipped (see `.npmignore`). `buildTimeContract.ts` inlines `WEBHOLM_JSON_FILENAME` and `LEGACY_NATIVEFIER_JSON_FILENAME` and re-exports types only (erased at compile); it must not `require` `shared/lib` at runtime. Keep those constants in sync with `shared/src/contract.ts`.
 
 ## Configuration transport: `webholm.json`
 
 The only supported channel from builder to packaged app is a JSON file next to the app resources:
 
-- **Constant:** `NATIVEFIER_JSON_FILENAME` in `shared/src/contract.ts` and `src/buildTimeContract.ts` (must match; CLI uses the latter in published builds)
+- **Constant:** `WEBHOLM_JSON_FILENAME` in `shared/src/contract.ts` and `src/buildTimeContract.ts` (must match; CLI uses the latter in published builds). `LEGACY_NATIVEFIER_JSON_FILENAME` (`nativefier.json`) is still read for apps built before the rename.
 - **Writer:** `mapAppOptionsToOutputOptions()` in `src/options/outputOptionsMapper.ts` (driven by `OUTPUT_FIELD_MAPPINGS`) writes `OutputOptions` during `prepareElectronApp()`.
 - **Reader:** `app/src/config/loadRuntimeConfig.ts` loads and validates `webholm.json` at startup; components receive `OutputOptions` from `main.ts`.
 
@@ -132,7 +132,7 @@ flowchart TB
 | --- | --- | --- |
 | Default `webPreferences` | `app/src/helpers/windowHelpers.ts` | `preload.js`, secure flags, Flash sandbox exception |
 | User `--inject` | `app/src/preload/injectScripts.ts` | Preload world; use `webholm.session`, not `require('electron')` |
-| Session bridge | `app/src/preload/webholmBridge.ts` | `contextBridge.exposeInMainWorld('nativefier', …)` |
+| Session bridge | `app/src/preload/webholmBridge.ts` | `contextBridge.exposeInMainWorld('webholm', …)`, plus the same bridge as legacy `'nativefier'` |
 | HTTP login popup | `app/src/loginPreload.ts`, `app/src/static/login.js` | Separate window; `webholmLogin.submit` |
 | Display capture | `app/src/services/displayMediaService.ts` | Main-process handler; picker HTML from `screenSharePicker.ts` |
 | Notifications | `notificationShimSource.ts`, `notificationPostMessageBridge.ts`, `notificationTokenStore.ts`, `notificationIpcService.ts` | Nonce in inject closure; `postMessage` → preload → `webholm-notify`; main validates token and rate-limits badge |

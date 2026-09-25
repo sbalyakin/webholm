@@ -1,6 +1,6 @@
 ---
 name: seb-commit
-description: Perform the full guarded git commit workflow for this repository. Use when the user asks to commit current work, save changes to git, or run a commit flow that stages changes, proposes a commit message, waits for explicit approval, runs ByteRover curation, and creates the commit. Also use when the user wants a commit message generated from the exact staged or to-be-staged snapshot while enforcing `.agents/rules/commit-messages.md`.
+description: Perform the full guarded git commit workflow for this repository. Use when the user asks to commit current work, save changes to git, or run a commit flow that stages changes, proposes a commit message, waits for explicit approval, and creates the commit. Do not use for message-only requests; use seb-commit-message instead.
 ---
 
 # Commit Workflow
@@ -9,7 +9,7 @@ Run a guarded commit flow. Use the git index as the commit source of truth.
 
 ## Required Inputs
 
-Read `.agents/rules/commit-messages.md` before generating any commit message.
+Read `.agents/rules/commit-message.md` before generating any commit message.
 
 Inspect git state first:
 
@@ -67,7 +67,7 @@ git diff --cached
 git diff --cached --name-only
 ```
 
-Generate one commit message for that exact snapshot. Follow `.agents/rules/commit-messages.md` exactly.
+Generate one commit message for that exact snapshot. Follow `.agents/rules/commit-message.md` exactly.
 Display the commit message wrapped in triple backticks.
 
 Do not commit in the same reply where you first propose the message.
@@ -85,35 +85,12 @@ If the user says `2`, regenerate one new message for the same selected scope and
 
 If the user provides a custom message, use it exactly. Do not rewrite it unless the user explicitly asks.
 
-### 6. Run ByteRover curation before commit
+### 6. Create the commit
 
-Do not create the commit until ByteRover curation succeeds.
-
-Curate the exact selected commit scope:
-- use a short factual summary
-- focus on behavioral or architectural outcome
-- prefer `-f` with up to 5 most relevant changed files
-- if the change is broad but concentrated in one subsystem, use `-d` with one dominant folder instead
-- prefer `--format json`
-
-Pick the files or folder from the selected staged snapshot, not from unstaged workspace state.
-
-Example patterns:
-
-```bash
-brv curate "Improve input replacement reliability" --format json -f path/a -f path/b
-brv curate "Refine runtime event pipeline behavior" --format json -d src/SwitchyOneCore/Runtime
-```
-
-If curation fails, stop and tell the user curation failed. Do not create the commit.
-
-### 7. Create the commit
-
-If curation succeeds, create the git commit with the approved message.
+Create the git commit with the approved message.
 
 After commit, report:
 - the final commit message
-- confirmation that curation succeeded
 - the created commit hash
 
 ## Guardrails
